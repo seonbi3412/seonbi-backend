@@ -183,7 +183,7 @@ def recommend(request):
         
     else:
         selectMovies = set()
-        recommendMovies = []
+        recommendMovies = set()
         User = get_user_model()
         user = get_object_or_404(User, pk=data['user']['id'])
         for like_movie in data['user']['like_movies']:
@@ -203,8 +203,8 @@ def recommend(request):
             if len(Review.objects.filter(movie_id=sm, user=user)) > 0:
                 continue
             else:
-                recommendMovies.append(get_object_or_404(Movie, pk=sm))
+                recommendMovies.add(get_object_or_404(Movie, pk=sm))
         for scomo in scoreMovies:
-            recommendMovies.append(scomo)
+            recommendMovies.add(scomo)
         serializers = MovieSerializer(recommendMovies, many=True)
         return Response(serializers.data)
