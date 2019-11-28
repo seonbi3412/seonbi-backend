@@ -196,10 +196,12 @@ def recommend(request):
             actor = get_object_or_404(Actor, pk=like_actor['id'])
             for am in actor.filmography.all():
                 selectMovies.add(am.id)
+        for sm in selectMovies:
+            print(Review.objects.filter(movie_id=sm, user=user))
+            if len(Review.objects.filter(movie_id=sm, user=user)) > 0:
+                continue
+            else:
+                recommendMovies.append(get_object_or_404(Movie, pk=sm))
         
-        # for review in user.rootreview_set.all():
-        #     print(review.review)
-
-
-
-    return Response({'status': 204, 'message': '왔어요'})
+    serializers = MovieSerializer(recommendMovies, many=True)
+    return Response(serializers.data)
