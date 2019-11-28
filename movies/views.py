@@ -176,9 +176,11 @@ def user_update_delete(request, user_pk):
 @permission_classes([AllowAny])
 def recommend(request):
     data = request.data
-    if request.data['user'] == -1:
-        print(11)
-
+    scoreMovies = Movie.objects.all().order_by('-score')[:10]
+    if request.data['user'] == -1 :
+        serializers = MovieSerializer(scoreMovies, many=True)
+        return Response(serializers.data)
+        
     else:
         selectMovies = set()
         recommendMovies = []
@@ -202,6 +204,6 @@ def recommend(request):
                 continue
             else:
                 recommendMovies.append(get_object_or_404(Movie, pk=sm))
-        
-    serializers = MovieSerializer(recommendMovies, many=True)
-    return Response(serializers.data)
+
+        serializers = MovieSerializer(recommendMovies, scoreMovies, many=True)
+        return Response(serializers.data)
