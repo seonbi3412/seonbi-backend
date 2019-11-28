@@ -7,8 +7,8 @@ class Genre(models.Model):
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_genres', blank=True)
 
 class Actor(models.Model):
-    name = models.CharField(max_length=20)
-    name_en = models.CharField(max_length=40, blank=True)
+    name = models.CharField(max_length=100)
+    name_en = models.CharField(max_length=100, blank=True)
     birthday = models.TextField(blank=True)
     profile_path = models.TextField(blank=True)
     like_users = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='like_actors', blank=True)
