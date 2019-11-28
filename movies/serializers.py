@@ -26,9 +26,14 @@ class MovieSerializer(serializers.ModelSerializer):
         model = Movie
         fields = ['id', 'title', 'original_title', 'poster_url', 'actors', 'description', 'score', 'open_date', 'genres', 'like_users', 'director', 'video', 'country']
 
+class MovieActorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Movie
+        fields = ['id', 'title', 'original_title', 'poster_url', 'open_date', 'director']
+
 class Actor2Serializer(serializers.ModelSerializer):
     like_users = UserSerializer(many=True)
-    filmography = MovieSerializer(many=True)
+    filmography = MovieActorSerializer(many=True)
     class Meta:
         model = Actor
         fields = ['id', 'name', 'name_en', 'birthday', 'profile_path', 'like_users', 'filmography']
