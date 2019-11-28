@@ -15,8 +15,8 @@ class Actor(models.Model):
 
 class Movie(models.Model):
     genres = models.ManyToManyField(Genre, related_name='movies')
-    title = models.CharField(max_length=50)
-    original_title = models.CharField(max_length=100)
+    title = models.CharField(max_length=100)
+    original_title = models.CharField(max_length=200)
     poster_url = models.TextField()
     description = models.TextField()
     score = models.FloatField()
