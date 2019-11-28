@@ -204,6 +204,7 @@ def recommend(request):
                 continue
             else:
                 recommendMovies.append(get_object_or_404(Movie, pk=sm))
-
-        serializers = MovieSerializer(recommendMovies, scoreMovies, many=True)
+        for scomo in scoreMovies:
+            recommendMovies.append(scomo)
+        serializers = MovieSerializer(recommendMovies, many=True)
         return Response(serializers.data)
