@@ -94,6 +94,7 @@ def review(request):
     else:
         serializers = ReviewSerializer(data=request.data)
         # embed()
+        print(serializers)
         if serializers.is_valid(raise_exception=True):
             serializers.save()
             return Response(serializers.data)
@@ -110,10 +111,11 @@ def article(request):
 @api_view(['PUT', 'DELETE'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def update_delete(request, review_pk):
-    review = get_object_or_404(RootReview, pk=review_pk)
+    review = get_object_or_404(Review, pk=review_pk)
     if request.method == 'PUT':
         serializer = ReviewSerializer(data=request.data, instance=review)
         # embed()
+        print(serializer)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data)
@@ -121,15 +123,18 @@ def update_delete(request, review_pk):
         review.delete()
         return Response({'status': 204, 'message': '삭제되었습니다.'})
 
-@api_view(['PUT'])
+@api_view(['PUT', 'DELETE'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def update(request, review_pk):
-    review = get_object_or_404(RootReview, pk=review_pk)
-    serializer = ArticleSerializer(data=request.data, instance=review)
-    if serializer.is_valid(raise_exception=True):
-        serializer.save()
-        return Response(serializer.data)
-
+    review = get_object_or_404(Article, pk=review_pk)
+    if request.method == 'PUT':
+        serializer = ArticleSerializer(data=request.data, instance=review)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
+    else:
+        review.delete()
+        return Response({'status': 204, 'message': '삭제되었습니다.'})
 
 # ------------ user ----------------
 @api_view(['GET'])
@@ -145,6 +150,7 @@ def user_detail(request, user_pk):
 def user_index(request):
     User = get_user_model()
     users = User.objects.all()
+    print(users)
     serializers = User2Serializer(users, many=True)
     return Response(serializers.data)
 
@@ -169,17 +175,31 @@ def user_update_delete(request, user_pk):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def recommend(request):
-    print(request.data)
+    data = request.data
     if request.data['user'] == -1:
         print(11)
+
     else:
+        selectMovies = set()
+        recommendMovies = []
         User = get_user_model()
-        user = get_object_or_404(User, pk=request.data['userid'])
-        movies = Movie.objects.all()
-        print(22)
-        genres = Genre.objects.all()
-        actors = Actor.objects.all()
+        user = get_object_or_404(User, pk=data['user']['id'])
+        for like_movie in data['user']['like_movies']:
+            selectMovies.add(like_movie['id'])
+
+        for like_genre in data['user']['like_genres']:
+            genre = get_object_or_404(Genre, pk=like_genre['id'])
+            for gm in genre.movies.all():
+                selectMovies.add(gm.id)
+
+        for like_actor in data['user']['like_actors']:
+            actor = get_object_or_404(Actor, pk=like_actor['id'])
+            for am in actor.filmography.all():
+                selectMovies.add(am.id)
         
+        # for review in user.rootreview_set.all():
+        #     print(review.review)
+
 
 
     return Response({'status': 204, 'message': '왔어요'})

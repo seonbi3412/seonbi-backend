@@ -31,11 +31,12 @@ class Movie(models.Model):
 
 class RootReview(models.Model):
     content = models.CharField(max_length=150)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
 class Review(RootReview):
     score = models.IntegerField()
+    movieName = models.CharField(max_length=150)
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
 
 class Article(RootReview):
