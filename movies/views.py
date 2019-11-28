@@ -51,7 +51,7 @@ def like_movie(request, movie_pk):
 @api_view(['GET'])
 @permission_classes([IsAuthenticatedOrReadOnly])
 def actors_index(request):
-    actors = Actor.objects.all()
+    actors = Actor.objects.prefetch_related('like_users').prefetch_related('filmography').all()
     serializers = Actor2Serializer(actors, many=True)
     return Response(serializers.data)
 
